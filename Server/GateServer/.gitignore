@@ -6,6 +6,7 @@
 !*.h
 !*.ini
 !*.proto
+!*.cc
 
 # 保留 .gitignore 文件本身
 !.gitignore
