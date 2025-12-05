@@ -12,6 +12,11 @@
 #include <json/value.h>		// root节点
 #include <json/reader.h>	// 解析json
 
+#include <boost/filesystem.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ini_parser.hpp>
+
+
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
 namespace net = boost::asio;            // from <boost/asio.hpp>
@@ -22,3 +27,6 @@ enum ErrorCodes {
     Error_Json = 1001,  //Json解析错误
     RPCFailed = 1002,   //RPC请求错误
 };
+
+class ConfigMgr;
+extern ConfigMgr gCfgMgr;

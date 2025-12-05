@@ -1,0 +1,53 @@
+#pragma once
+#include <grpcpp/grpcpp.h>      // gRPC C++ 核心库
+#include "message.grpc.pb.h"    // 通过 protobuf 编译器生成的 gRPC 桩代码头文件
+#include "const.h"
+#include "Singleton.h"
+
+using grpc::Channel;            // gRPC 通信通道
+using grpc::Status;             // gRPC 操作状态（包含成功/失败信息）
+using grpc::ClientContext;      // 客户端上下文（用于设置超时、元数据等）
+
+using message::GetVerifyReq;    // 请求消息类型（注意：Varify 拼写应为 Verify）
+using message::GetVerifyRsp;    // 响应消息类型
+using message::VerifyService;   // gRPC 服务接口
+
+
+class VerifyGrpcClient :public Singleton<VerifyGrpcClient>
+{
+    friend class Singleton<VerifyGrpcClient>;
+public:
+
+    GetVerifyRsp GetVarifyCode(std::string email) {
+        ClientContext context;      // 创建客户端上下文对象
+        GetVerifyRsp reply;         // 创建响应对象
+        GetVerifyReq request;       // 创建请求对象
+        request.set_email(email);   // 设置请求的 email 字段
+
+        // 调用 gRPC 远程方法
+        Status status = stub_->GetVerifyCode(&context, request, &reply);
+
+        if (status.ok()) {          // 检查 RPC 调用是否成功
+            return reply;           // 返回正常响应
+        }
+        else {
+            reply.set_error(ErrorCodes::RPCFailed);  // 设置错误码
+            return reply;           // 返回错误响应
+        }
+    }
+
+private:
+    VerifyGrpcClient() {
+        // 创建到 gRPC 服务器的通道
+        std::shared_ptr<Channel> channel = grpc::CreateChannel(
+            "127.0.0.1:50051",      // 服务器地址和端口
+            grpc::InsecureChannelCredentials()      // 不使用 TLS 加密
+        );                          
+
+        // 创建服务存根（stub），用于调用远程方法
+        stub_ = VerifyService::NewStub(channel);
+    }
+
+    std::unique_ptr<VerifyService::Stub> stub_;
+};
+
