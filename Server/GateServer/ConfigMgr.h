@@ -53,12 +53,19 @@ public:
         return *this;
     };
 
+    static ConfigMgr& Inst()
+    {
+        static ConfigMgr cfg_mgr;
+        return cfg_mgr;
+    }
+    
+private:
+
     ConfigMgr(const ConfigMgr& src) {
         this->_config_map = src._config_map;
     }
 
     ConfigMgr();
-private:
 
     // ´æ´¢sectionºÍkey-value¶ÔµÄmap  
     std::map<std::string, SectionInfo> _config_map;

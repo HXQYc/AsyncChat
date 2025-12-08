@@ -1,9 +1,10 @@
 #include "CServer.h"
 #include "HttpConnection.h"
+#include "AsioIOContextPool.h"
 
 // 构造函数
 CServer::CServer(boost::asio::io_context& ioc, unsigned short& port) 
-	:_ioc(ioc),_acceptor(ioc, tcp::endpoint(tcp::v4(), port)), _socket(ioc) {
+	:_ioc(ioc),_acceptor(ioc, tcp::endpoint(tcp::v4(), port)){
 
 }
 
@@ -11,16 +12,17 @@ CServer::CServer(boost::asio::io_context& ioc, unsigned short& port)
 void CServer::Start()
 {
     auto self = shared_from_this();
-    _acceptor.async_accept(_socket, [self](beast::error_code ec) {
+    auto& io_context = AsioIOContextPool::GetInstance()->GetIOContext();
+    std::shared_ptr<HttpConnection> new_con = std::make_shared<HttpConnection>(io_context);
+    _acceptor.async_accept(new_con->GetSocket(), [self, new_con](beast::error_code ec) {
         try {
             //出错则放弃这个连接，继续监听新链接
             if (ec) {
                 self->Start();
                 return;
             }
-
-            //处理新链接，创建HttpConnection类管理新连接
-            std::make_shared<HttpConnection>(std::move(self->_socket))->Start();        // 这里实际上是把底层的nativesocket传递给httpconnection类中的socket，原本的socket可以继续accept
+            //处理新链接，创建HpptConnection类管理新连接
+            new_con->Start();
             //继续监听
             self->Start();
         }
