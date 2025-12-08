@@ -1,0 +1,26 @@
+# 忽略所有文件
+*
+
+# 但保留源代码文件
+!*.js
+!*.proto
+!*.json
+
+# 保留 .gitignore 文件本身
+!.gitignore
+
+# 保留目录结构（以便保留其中的源代码文件）
+!*/
+
+# 明确忽略常见不需要版本控制的文件和目录
+node_modules/
+package-lock.json
+*.log
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.env
+.env.local
