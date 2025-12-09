@@ -21,6 +21,7 @@
 #include <mutex>
 #include <condition_variable>
 #include "ConfigMgr.h"
+#include "sw/redis++/redis++.h"
 
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
