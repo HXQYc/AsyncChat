@@ -9,6 +9,8 @@
 #include <mutex>
 #include <QByteArray>
 #include <QNetworkReply>
+#include <QDir>
+#include <QSettings>
 
 /*
  * @brief: 用来刷新qss
@@ -16,6 +18,10 @@
 */
 extern std::function<void(QWidget*)> repolish;
 
+/*
+ * @brief: 请求ID
+ *
+*/
 enum ReqId{
     ID_GET_VERIFY_CODE = 1001,  // 获取验证码
     ID_REG_USER = 1002,         // 注册用户
@@ -31,5 +37,6 @@ enum ErrorCodes{
     ERR_NETWORK = 2,    // 网络错误
 };
 
+extern QString gate_url_prefix;
 
 #endif // GLOBAL_H
