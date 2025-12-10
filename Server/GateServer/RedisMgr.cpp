@@ -40,6 +40,7 @@ bool RedisMgr::Get(const std::string& key, std::string& value)
 	freeReplyObject(reply);
 
 	std::cout << "Succeed to execute command [ GET " << key << "  ]" << std::endl;
+	std::cout << "Retrieved value: [" << value << "], length: " << value.length() << std::endl;  // Ìí¼ÓÕâÐÐ
 	_con_pool->returnConnection(connect);
 	return true;
 }
@@ -286,13 +287,10 @@ bool RedisMgr::HDel(const std::string& key, const std::string& field)
 		return false;
 	}
 
-	Defer defer([&connect, this]() {
-		_con_pool->returnConnection(connect);
-		});
-
 	redisReply* reply = (redisReply*)redisCommand(connect, "HDEL %s %s", key.c_str(), field.c_str());
 	if (reply == nullptr) {
 		std::cerr << "HDEL command failed" << std::endl;
+		_con_pool->returnConnection(connect);
 		return false;
 	}
 
@@ -302,6 +300,7 @@ bool RedisMgr::HDel(const std::string& key, const std::string& field)
 	}
 
 	freeReplyObject(reply);
+	_con_pool->returnConnection(connect);
 	return success;
 }
 

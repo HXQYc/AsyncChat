@@ -72,7 +72,7 @@ class VerifyGrpcClient :public Singleton<VerifyGrpcClient>
     friend class Singleton<VerifyGrpcClient>;
 public:
 
-    GetVerifyRsp GetVarifyCode(std::string email) {
+    GetVerifyRsp GetvarifyCode(std::string email) {
         ClientContext context;      // 创建客户端上下文对象
         GetVerifyRsp reply;         // 创建响应对象
         GetVerifyReq request;       // 创建请求对象
